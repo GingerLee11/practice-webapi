@@ -1,12 +1,20 @@
-# Gunicorn
-
-def render_template(template_name='index.html'):
-    return '<h1>Hello, World!</h1>'
+from api.views import (
+    home, user_list
+)
+from api.urls import render_template
 
 def app(environ, start_response):
+    path = environ.get('PATH_INFO')
+    if path.endswith("/"):
+        path = path[:-1]
+    if path == '': # index
+        data = home(environ)
+    elif path == '/users': # user list
+        data = user_list(environ)
+    else:
+        data = render_template(template_name='api/404.html', context={"path": path})
     for k, v in environ.items():
         print(k, v)
-    data = render_template()
     data = data.encode("utf-8")
     start_response(
         f"200 OK", [

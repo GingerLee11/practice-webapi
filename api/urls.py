@@ -1,28 +1,11 @@
-import json
+# urls.py
 
-from api.handlers import (
-    index
-)
-from api.models import User
+def render_template(template_name, context={}):
+    html_str = ""
+    with open(template_name, 'r') as f:
+        html_str = f.read()
+        html_str = html_str.format(**context)
+    return html_str
 
-def url_handlers(enviorn, start_response, user: User):
-    path = enviorn.get('PATH_INFO')
-    if path.endswith('/'):
-        path = path[:-1]
-
-    if path == '':
-        context = index(enviorn)
-        if context.get('data'):
-            data = json.dumps(context.get('data'))
-        else:
-            json.dumps(context.get("error"))
-        status = context['status']
-
-    data = data.encode('utf-8')
-
-    response_headers = [
-        ('Content-Type', 'text/html'),
-        ('Content-Lenth', str(len(data))),
-    ]
-    start_response(status, response_headers)
-    return data
+def url_handlers(environ):
+    pass
