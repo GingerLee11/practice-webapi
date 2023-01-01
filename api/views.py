@@ -1,4 +1,4 @@
-from api.models import User, users
+from api.models import User
 
 def render_template(template_name, context={}):
     html_str = ""
@@ -9,24 +9,24 @@ def render_template(template_name, context={}):
 
 def home(environ):
     return render_template(
-        template_name='api/index.html',
+        template_name='templates/index.html',
         context={}
     )
 
 def user_list(environ):
     return render_template(
-        template_name='api/user_list.html',
-        context={'users': users}
+        template_name='templates/user_list.html',
+        context={},
     )
 
 def add_user(environ):
     return render_template(
-        template_name='api/add_user.html',
+        template_name='templates/add_user.html',
         context={},
     )
 
 def not_found_page(environ, path):
     return render_template(
-        template_name='api/404.html',
+        template_name='templates/404.html',
         context={'path': path}
     )
