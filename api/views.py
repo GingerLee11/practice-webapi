@@ -1,4 +1,6 @@
-from api.models import User
+import cgi
+
+from api.models import User, Session, create_session
 
 def render_template(template_name, context={}):
     html_str = ""
@@ -14,6 +16,28 @@ def home(environ):
     )
 
 def user_list(environ):
+    method = environ.get('REQUEST_METHOD')
+    print(environ.get('REQUEST_METHOD'))
+    if method == 'POST':
+        post_env = environ.copy()
+        post_env['QUERY_STRING'] = ''
+        form = cgi.FieldStorage(
+            fp=environ['wsgi.input'],
+            environ=post_env,
+            keep_blank_values=True
+        )
+        form_data = [(k, form[k].value) for k in form.keys()]
+        print(form_data)
+        # Create a user
+        user = User()
+        user.email = form['user_email'].value
+        # Create (or reopen) a session everytime we want to create a user
+        # TODO: Write a function to automatically open and close a session
+        create_session(user)
+        return render_template(
+            template_name='templates/success.html',
+            context={'user': user}
+        )
     return render_template(
         template_name='templates/user_list.html',
         context={},
@@ -21,8 +45,14 @@ def user_list(environ):
 
 def add_user(environ):
     return render_template(
-        template_name='templates/add_user.html',
+        template_name='templates/user_list.html',
         context={},
+    )
+
+def update_user(environ):
+    return render_template(
+        template_name='templates/update_user.html',
+        context={}
     )
 
 def not_found_page(environ, path):
