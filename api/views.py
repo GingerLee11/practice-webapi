@@ -1,6 +1,6 @@
 import cgi
 
-from api.models import User, s
+from models import User, s
 
 def render_template(template_name, context={}):
     html_str = ""
