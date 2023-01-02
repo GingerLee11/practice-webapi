@@ -1,4 +1,5 @@
 from api.urls import url_handlers
+from api.models import s
 
 def app(environ, start_response):
     data = url_handlers(environ)
@@ -8,4 +9,5 @@ def app(environ, start_response):
             ("Content-Type", str(len(data))),
         ]
     )
+    s.close()
     return iter([data])

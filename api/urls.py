@@ -1,6 +1,7 @@
 from api.views import (
     home, user_list, add_user, 
-    update_user, not_found_page
+    update_user,
+    not_found_page,
 )
 
 def url_handlers(environ):

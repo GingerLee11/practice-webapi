@@ -40,13 +40,12 @@ engine = create_engine(DATABASE_URI)
 
 Session = sessionmaker(bind=engine)
 
+s = Session()
+
 Base.metadata.create_all(engine)
 
 def recreate_database():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
-def create_session(user):
-    with Session() as session:
-        session.add(user)
-        session.commit()
+

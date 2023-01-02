@@ -1,6 +1,6 @@
 import cgi
 
-from api.models import User, Session, create_session
+from api.models import User, s
 
 def render_template(template_name, context={}):
     html_str = ""
@@ -33,11 +33,13 @@ def user_list(environ):
         user.email = form['user_email'].value
         # Create (or reopen) a session everytime we want to create a user
         # TODO: Write a function to automatically open and close a session
-        create_session(user)
+        s.add(user)
+        s.commit()
         return render_template(
-            template_name='templates/success.html',
-            context={'user': user}
+            template_name='templates/user_list.html',
+            context = {'user': user}
         )
+
     return render_template(
         template_name='templates/user_list.html',
         context={},
