@@ -13,7 +13,7 @@ from urls import url_handlers
 
 
 def app(env, start_response):
-    response = url_handlers(env)
+    response = url_handlers(env, start_response)
     start_response(
         f"200 OK", [
             ("Content-Type", 'text/html'),

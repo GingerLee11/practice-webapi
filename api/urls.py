@@ -7,7 +7,7 @@ from views import (
 )
 from models import User, Session
 
-def url_handlers(environ):
+def url_handlers(environ, start_response):
     session = Session()
     path = environ.get('PATH_INFO')
     method = environ.get('REQUEST_METHOD').upper()
@@ -15,18 +15,19 @@ def url_handlers(environ):
     # TODO: Figure out how to get and then update existing users.
     str_path = str(path).split('/')[-1]
     print(str_path)
-    # print(session.query(User).all())
     qs = session.query(User).filter_by(uuid=str(str_path)).all()
     print(qs)
     if qs:
         user = qs[0]
     else:
         user = User()
-    
+    if path == '/favicon.ico': 
+        start_response('301 Moved Permanently', [('Location', '')])
+        return ''
+
     if path.endswith("/"):
         path = path[:-1]
-    # if method == 'GET':
-    #     user = session.query(User).get(uuid=)
+
     if path == '': # index
         data = home(environ)
     elif path == '/users': # user list or create user

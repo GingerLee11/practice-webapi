@@ -19,6 +19,7 @@ def home(environ):
 def user_list(environ, session):
     method = environ.get('REQUEST_METHOD').upper()
     print(environ.get('REQUEST_METHOD'))
+    users = session.query(User).all()
     if method == 'POST':
         post_env = environ.copy()
         post_env['QUERY_STRING'] = ''
@@ -31,7 +32,14 @@ def user_list(environ, session):
         print(form_data)
         # TODO: Check for existing email:
         # If the email is the same go to update instead of creation
-        
+        email = form['user_email'].value
+        qs = session.query(User).get(email=email)
+        if qs:
+            error = f'User with {email} already exists!'
+            return render_template(
+                template_name='templates/user_list',
+                context={'error': error}
+            )
         # Create a user
         user = User()
         user.email = form['user_email'].value
@@ -47,7 +55,7 @@ def user_list(environ, session):
         )
     return render_template(
         template_name='templates/user_list.html',
-        context={},
+        context={'users': users},
     )
 
 def update_user(environ, user, session):
