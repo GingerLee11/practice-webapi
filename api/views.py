@@ -20,7 +20,8 @@ def home(environ):
 def user_list(environ, users):
     user_str = ''
     for user in users:
-        user_str += f'<li><a href="#">{user.email}</a></li>'
+        if user.username:
+            user_str += f'<li><a href="#">{user.username}</a></li>'
     print(user_str)
     return render_template(
         template_name='templates/user_list.html',

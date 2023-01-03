@@ -15,10 +15,12 @@ from views import (
     update_user, not_found_page,
 
 )
-from models import Session, User
+from models import Session, User, send_python_email
 
 def app(env, start_response):
     session = Session()
+    # for k, v in env.items():
+    #     print(k, v)
     path = env.get('PATH_INFO')
     method = env.get('REQUEST_METHOD').upper()
     print(method)
@@ -75,6 +77,14 @@ def app(env, start_response):
             else:
                 user.email = email
                 user.uuid = str(uuid4()).replace('-', '') + str(uuid4()).replace('-', '')
+                
+                # Send email with link containing the uuid
+                url = env['HTTP_HOST']
+                uri = env['PATH_INFO']
+                message = f"Click this link to login: {url}{uri}/{user.uuid}"
+                print(message)
+                send_python_email(email, message)
+
                 print(user)
                 session.add(user)
                 session.commit()
