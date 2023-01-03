@@ -38,8 +38,11 @@ def url_handlers(environ, start_response):
         data = not_found_page(environ, path=path)
     # for k, v in environ.items():
     #     print(k, v)
-
+    # status = context['status']
     data = data.encode("utf-8")
+    # content_type = 'application/json' if int(status.split(' ')[0]) < 400 else 'text/plain'
+    # response_headers = [('Content-Type', content_type), ('Content-Length', str(len(data)))]
     if session:
         session.close()
+    # start_response(status, response_headers)
     return data
