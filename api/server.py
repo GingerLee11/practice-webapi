@@ -10,19 +10,16 @@ from gevent.pywsgi import WSGIServer
 import gevent
 
 from urls import url_handlers
-from models import Session
 
 
 def app(env, start_response):
-    s = Session()
-    response = url_handlers(env, session=s)
+    response = url_handlers(env)
     start_response(
         f"200 OK", [
             ("Content-Type", 'text/html'),
             ("Content-Type", str(len(response))),
         ]
     )
-    s.close()
     return iter([response])
 
 

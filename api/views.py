@@ -1,4 +1,5 @@
 import cgi
+from uuid import uuid4
 
 from models import User
 
@@ -15,7 +16,7 @@ def home(environ):
         context={}
     )
 
-def user_list(environ, user, session):
+def user_list(environ, session):
     method = environ.get('REQUEST_METHOD').upper()
     print(environ.get('REQUEST_METHOD'))
     if method == 'POST':
@@ -28,11 +29,17 @@ def user_list(environ, user, session):
         )
         form_data = [(k, form[k].value) for k in form.keys()]
         print(form_data)
+        # TODO: Check for existing email:
+        # If the email is the same go to update instead of creation
+        
         # Create a user
+        user = User()
         user.email = form['user_email'].value
+        user.uuid = str(uuid4()).replace('-', '')
         print(user)
         session.add(user)
         session.commit()
+        session.close()
 
         return render_template(
             template_name='templates/user_list.html',
@@ -56,7 +63,7 @@ def update_user(environ, user, session):
         )
         form_data = [(k, form[k].value) for k in form.keys()]
         print(form_data)
-        
+
     return render_template(
         template_name='templates/update_user.html',
         context={'user': user}
