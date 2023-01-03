@@ -16,7 +16,7 @@ class User(Base):
     __tablename__ = 'users'
     
     pid = Column(Integer, primary_key=True)
-    uuid = Column(String, default=uuid4())
+    uuid = Column(String, default=str(uuid4()).replace('-', ''))
     username = Column(String, nullable=True)
     name = Column(String, nullable=True)
     email = Column(String)
@@ -25,7 +25,7 @@ class User(Base):
     lastseen = Column(Date, default=datetime.now())
 
     def __repr__(self):
-        return f"<User(username={self.username}, name={self.name}, email={self.email}, last seen={self.lastseen})>"
+        return f"<User(uuid={self.uuid}, username={self.username}, name={self.name}, email={self.email}, last seen={self.lastseen})>"
 
 
 ## config.py
@@ -39,8 +39,6 @@ DATABASE_URI = os.environ.get('DATABASE_URI')
 engine = create_engine(DATABASE_URI)
 
 Session = sessionmaker(bind=engine)
-
-s = Session()
 
 Base.metadata.create_all(engine)
 
