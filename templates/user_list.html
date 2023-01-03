@@ -9,16 +9,17 @@
 <body>
     <h1>Users</h1>
 
-    <ul id="user-list">
 
+    <ul id="user-list">
+        {users}
     </ul>
 
     <h3>Add User</h3>
     <p>An email will be sent to confirm your identity.</p>
 
-    <form action="/users/" method="POST">
+    <form action="/users" method="POST">
         <label for="email_add_user">Email:</label>
-        <input name="user_email" id="email_add_user" type="text" placeholder="example@email.com">
+        <input name="user_email" id="email_add_user" type="email" placeholder="example@email.com">
         <button type="submit">Submit</button>
     </form>
 
