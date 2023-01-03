@@ -19,6 +19,7 @@ class User(Base):
     username = Column(String, nullable=True)
     name = Column(String, nullable=True)
     email = Column(String, unique=True)
+    password = Column(String)
     sms = Column(String, nullable=True)
     created = Column(Date, default=datetime.now())
     lastseen = Column(Date, default=datetime.now())
@@ -46,3 +47,6 @@ Base.metadata.create_all(engine)
 def recreate_database():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+
+if __name__ == "__main__":
+    recreate_database()

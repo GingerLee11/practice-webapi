@@ -12,7 +12,8 @@ import gevent
 
 from views import (
     home, user_list,
-    update_user,
+    update_user, not_found_page,
+
 )
 from models import Session, User
 
@@ -44,15 +45,15 @@ def app(env, start_response):
         post_env['QUERY_STRING'] = ''
         form = cgi.FieldStorage(
             fp=env['wsgi.input'],
-            env=post_env,
+            environ=post_env,
             keep_blank_values=True
         )
         form_data = [(k, form[k].value) for k in form.keys()]
-        args.update(form_data)
-        email = form_data['user_email'].value
+        # args.update(form_data)
+        email = form['user_email'].value
     if method == 'PUT':
         wsgi_input = wsgi_input.read()
-        args.update(wsgi_input)
+        # args.update(wsgi_input)
 
     if path == '/favicon.ico': 
         start_response('301 Moved Permanently', [('Location', '')])
@@ -61,8 +62,9 @@ def app(env, start_response):
     if path.endswith("/"):
         path = path[:-1]
 
+    print(path)
     if path == '': # index
-        data = home(env)
+        response = home(env)
 
     elif path == '/users': # user list or create user
         if method == 'POST':
@@ -77,44 +79,31 @@ def app(env, start_response):
                 session.add(user)
                 session.commit()
                 status = '201 Created'
-        data = user_list(env, users)
+        response = user_list(env, users)
 
-    elif path == f'/users/{user.uuid}':
+    elif path == f'/users/{str(user.uuid)}':
         if method == 'PUT':
             post_env = env.copy()
             post_env['QUERY_STRING'] = ''
             form = cgi.FieldStorage(
                 fp=env['wsgi.input'],
-                env=post_env,
+                environ=post_env,
                 keep_blank_values=True
             )
             form_data = [(k, form[k].value) for k in form.keys()]
             print(form_data)
-        data = update_user(env, user)
+        response = update_user(env, user)
     else:
+        response = not_found_page(env, path)
         status = '404 Not Found'
     if session: 
         session.close()
-    response = data.encode("utf-8")
-    
-    try:
-        ret = { 
-            'path' : path,
-            'args' : args,
-            'method' : method,
-            'response': response #the output of the functions you call
-		}
-
-        start_response(f'{status}', [('Content-Type', 'application/json')])
-        return dumps(ret)
-
-    except Exception as inst:
-        start_response('500 Internal Server Error', [('Content-Type', 'text/plain')])
-        return repr(inst)
+    response = response.encode("utf-8")
+    print(f'type: {type(response)}')
 
     start_response(
         f"{status}", [
-            ("Content-Type", 'html/text'),
+            ("Content-Type", 'text/html'),
             ("Content-Length", str(len(response))),
         ]
     )
