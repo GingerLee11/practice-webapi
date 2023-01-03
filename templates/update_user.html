@@ -7,10 +7,44 @@
     <title>Index</title>
 </head>
 <body>
-    <h1>Update user {user.username}</h1>
+    <h1>Update user {user.email}</h1>
 
     <form action="" method="POST">
-        
+        <table>
+            <tr>
+                <td>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" value="{user.username}" required>
+                </td>
+                        
+            </tr>
+            <tr>
+                <td>
+                    <label for="name">Name</label>
+                    <input name="name" type="text" value="{user.name}" required>
+                </td>
+                        
+            </tr>
+            <tr>
+                <td>
+                    <label for="email">Email</label>
+                    <input name="email" type="email" value="{user.email}" required>
+                </td>
+                        
+            </tr>
+            <tr>
+                <td>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" value="{user.password}" required>
+                </td>
+                        
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit">Submit</button>
+                </td>
+            </tr>
+        </table>
     </form>
 </body>
 </html>
