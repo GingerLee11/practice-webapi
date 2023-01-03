@@ -29,20 +29,21 @@ def url_handlers(environ, start_response):
         path = path[:-1]
 
     if path == '': # index
-        data = home(environ)
+        context = home(environ)
     elif path == '/users': # user list or create user
-        data = user_list(environ, session)
+        context = user_list(environ, session)
     elif path == f'/users/{user.uuid}':
-        data = update_user(environ, user, session)
+        context = update_user(environ, user, session)
     else:
-        data = not_found_page(environ, path=path)
+        context = not_found_page(environ, path=path)
     # for k, v in environ.items():
     #     print(k, v)
-    # status = context['status']
+    status = context['status']
+    data = json.dumps(context.get('data')) if context.get('data') else context.get('error')
     data = data.encode("utf-8")
-    # content_type = 'application/json' if int(status.split(' ')[0]) < 400 else 'text/plain'
-    # response_headers = [('Content-Type', content_type), ('Content-Length', str(len(data)))]
+    content_type = 'application/json' if int(status.split(' ')[0]) < 400 else 'text/plain'
+    response_headers = [('Content-Type', content_type), ('Content-Length', str(len(data)))]
     if session:
         session.close()
-    # start_response(status, response_headers)
+    start_response(status, response_headers)
     return data

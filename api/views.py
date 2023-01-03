@@ -4,25 +4,12 @@ import json
 
 from models import User
 
-def render_template(template_name, context={}):
-    html_str = ""
-    with open(template_name, 'r') as f:
-        html_str = f.read()
-        html_str = html_str.format(**context)
-
-        # status = context['status']
-        #data = html_str.encode("utf-8")
-        # content_type = 'application/json' if int(status.split(' ')[0]) < 400 else 'text/plain'
-        # response_headers = [('Content-Type', content_type), ('Content-Length', str(len(data)))]
-    return html_str
 
 def home(environ):
-    return render_template(
-        template_name='templates/index.html',
-        context={
-            'status': '200 OK'
-            }
-    )
+    return {
+        'data': '<h1>Hello, World!</h1>',
+        'status': '200 OK'
+    }
 
 def user_list(environ, session):
     method = environ.get('REQUEST_METHOD').upper()
@@ -44,13 +31,12 @@ def user_list(environ, session):
         qs = session.query(User).filter_by(email=email).all()
         if qs:
             error = f'User with {email} already exists!'
-            return render_template(
-                template_name='templates/user_list.html',
-                context={
-                    'error': error,
-                    'status': '409 Conflict',
-                }
-            )
+ 
+            context={
+                'error': error,
+                'status': '409 Conflict',
+            }
+            return context
         # Create a user
         user = User()
         user.email = form['user_email'].value
@@ -59,21 +45,16 @@ def user_list(environ, session):
         session.add(user)
         session.commit()
         session.close()
-
-        return render_template(
-            template_name='templates/user_list.html',
-            context = {
-                'user': user,
-                'status': '200 OK',
-            }
-        )
-    return render_template(
-        template_name='templates/user_list.html',
-        context={
-            'users': users,
-            'status': '200 OK',
-        },
-    )
+        context = {
+            'data': user,
+            'status': '201 Created',
+        }
+        return context
+    context = {
+        'data': users,
+        'status': '200 OK',
+    }
+    return context
 
 def update_user(environ, user, session):
     method = environ.get('REQUEST_METHOD').upper()
@@ -89,20 +70,15 @@ def update_user(environ, user, session):
         form_data = [(k, form[k].value) for k in form.keys()]
         print(form_data)
 
-    return render_template(
-        template_name='templates/update_user.html',
-        context={
-            'user': user,
-            'status': '302',    
-        }
-    )
+    context={
+        'data': user,
+        'status': '302 Found',    
+    }
+    return context
 
 def not_found_page(environ, path):
-    return render_template(
-        template_name='templates/404.html',
-        context={
-            'path': path,
-            'status': '404 Not Found'
-        
-        }
-    )
+    context={
+        'data': path,
+        'status': '404 Not Found'
+    }
+    return context
