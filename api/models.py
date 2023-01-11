@@ -65,12 +65,7 @@ def send_python_email(receiver_email, message):
         server.ehlo()  # Can be omitted
         server.login(send_email, email_password)
         server.sendmail(send_email, receiver_email, message)
-    """
-    with smtplib.SMTP(host=host, port=port) as server:
-        server.starttls(context=context)
-        server.login(send_email, email_password)
-        server.sendmail(send_email, receiver_email, message)
-    """
+
 ## crud.py
 
 engine = create_engine(DATABASE_URI)
